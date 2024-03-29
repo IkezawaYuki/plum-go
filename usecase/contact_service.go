@@ -13,7 +13,7 @@ type SlackService interface {
 }
 
 type ChatGPTService interface {
-	Create() error
+	Create(string) (string, error)
 }
 
 type HubspotService interface {
@@ -33,5 +33,6 @@ func NewContactService(
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
+
 	return nil
 }
