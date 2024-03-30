@@ -1,6 +1,8 @@
 package usecase
 
-import "plum/domain"
+import (
+	"plum/domain"
+)
 
 type ContactService struct {
 	ticketService  HubspotService
@@ -9,7 +11,7 @@ type ContactService struct {
 }
 
 type SlackService interface {
-	SendMessage(msg string) error
+	SendMessage(webhookUrl, msg string) error
 }
 
 type ChatGPTService interface {
@@ -33,6 +35,5 @@ func NewContactService(
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
-
-	return nil
+	panic("implement me!!")
 }
