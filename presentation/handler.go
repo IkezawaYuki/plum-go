@@ -26,7 +26,7 @@ func (h *Handler) SupportContact(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 	}
 
-	// Hubspotから顧客情報を取得
+	// TODO Hubspotから顧客情報を取得
 
 	go func() {
 		if err := h.contactService.RespondContact(contact); err != nil {
@@ -38,5 +38,19 @@ func (h *Handler) SupportContact(c *gin.Context) {
 }
 
 func (h *Handler) GmailToHubspot(c *gin.Context) {
+	var mail domain.Mail
+	if err := c.BindJSON(&mail); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	if err := mail.Validation(); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	go func() {
+		if err := h.contactService.GmailToHubspot(mail); err != nil {
+			log.Printf("%v", err)
+		}
+	}()
 	c.JSON(http.StatusOK, "success")
 }
