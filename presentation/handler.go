@@ -34,5 +34,9 @@ func (h *Handler) SupportContact(c *gin.Context) {
 		}
 	}()
 
-	c.JSON(200, "hello!!")
+	c.JSON(http.StatusOK, "success")
+}
+
+func (h *Handler) GmailToHubspot(c *gin.Context) {
+	c.JSON(http.StatusOK, "success")
 }

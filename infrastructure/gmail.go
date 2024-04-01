@@ -7,7 +7,7 @@ func NewGmailService() *GmailService {
 	return &GmailService{}
 }
 
-func (g *GmailService) CreateDraft() error {
+func (g *GmailService) CreateDraft(contents string) error {
 	return nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type Slack struct {
@@ -24,12 +25,16 @@ func (s *Slack) SendMessage(webhookURL, msg string) error {
 	req.Header.Set("Content-Type", "application/json")
 
 	// HTTPクライアントを作成してリクエストを送信
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Minute,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	// ステータスコードをチェック
 	if resp.StatusCode == http.StatusOK {

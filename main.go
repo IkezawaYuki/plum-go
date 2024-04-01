@@ -32,14 +32,16 @@ func main() {
 		})
 	})
 
-	hubspot := infrastructure.NewHubspot()
+	hubspot := infrastructure.NewHubspot(os.Getenv("HUBSPOT_ACCESS_TOKEN"))
 	slack := infrastructure.NewSlack()
 	chatgpt := infrastructure.NewChatGPT(os.Getenv("AOAI_TOKEN"))
+	gmailService := infrastructure.NewGmailService()
 
-	contactService := usecase.NewContactService(hubspot, slack, chatgpt)
+	contactService := usecase.NewContactService(hubspot, slack, chatgpt, gmailService)
 	handler := presentation.NewHandler(*contactService)
 
 	r.POST("/support/contact", handler.SupportContact)
+	r.POST("/mail/hubspot", handler.GmailToHubspot)
 
 	if err := r.Run("localhost:8080"); err != nil {
 		fmt.Println(err)
