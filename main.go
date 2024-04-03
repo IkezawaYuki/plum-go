@@ -1,19 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"os/signal"
 	"plum/infrastructure"
 	"plum/presentation"
 	"plum/usecase"
+	"syscall"
 )
 
 func main() {
 
 	r := gin.Default()
+	presentation.Logger.Info("start plum!!!")
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
@@ -43,7 +46,26 @@ func main() {
 	r.POST("/support/contact", handler.SupportContact)
 	r.POST("/mail/hubspot", handler.GmailToHubspot)
 
-	if err := r.Run("localhost:8080"); err != nil {
-		fmt.Println(err)
+	//if err := r.Run("localhost:8080"); err != nil {
+	//	fmt.Println(err)
+	//}
+	server := &http.Server{
+		Addr:    "127.0.0.1:8080",
+		Handler: r,
 	}
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			presentation.Logger.Error("listen: ", err)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	presentation.Logger.Info("Shutting down server...")
+
+	if err := server.Shutdown(context.Background()); err != nil {
+		presentation.Logger.Error("Server forced to shutdown: ", err)
+	}
+	presentation.Logger.Info("Server exiting")
 }
