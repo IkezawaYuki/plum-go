@@ -16,6 +16,7 @@ import (
 func main() {
 
 	r := gin.Default()
+
 	presentation.Logger.Info("start plum!!!")
 
 	r.Use(cors.New(cors.Config{
@@ -46,9 +47,6 @@ func main() {
 	r.POST("/support/contact", handler.SupportContact)
 	r.POST("/mail/hubspot", handler.GmailToHubspot)
 
-	//if err := r.Run("localhost:8080"); err != nil {
-	//	fmt.Println(err)
-	//}
 	server := &http.Server{
 		Addr:    "127.0.0.1:8080",
 		Handler: r,
