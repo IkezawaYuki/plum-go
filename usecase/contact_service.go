@@ -9,6 +9,10 @@ type ContactService struct {
 	slackService   SlackService
 	chatGptService ChatGPTService
 	gmailService   GmailService
+	aiSearch       AISearch
+}
+
+type AISearch interface {
 }
 
 type SlackService interface {
@@ -33,19 +37,25 @@ func NewContactService(
 	slackService SlackService,
 	chatGptService ChatGPTService,
 	gmailService GmailService,
+	aiSearch AISearch,
 ) *ContactService {
 	return &ContactService{
 		ticketService:  hubspotService,
 		slackService:   slackService,
 		chatGptService: chatGptService,
 		gmailService:   gmailService,
+		aiSearch:       aiSearch,
 	}
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
-	panic("implement me!!")
+
+	// ai search
+	//pastInteraction, err := aisearch.Get(contact.Contents)
+
+	return nil
 }
 
-func (c *ContactService) GmailToHubspot(mail domain.Mail) error {
+func (c *ContactService) GmailToHubspot(mail domain.Gmail) error {
 	panic("implement me!!")
 }

@@ -17,6 +17,10 @@ func NewChatGPT(token string) *ChatGPT {
 }
 
 func (c *ChatGPT) Create(content string) (string, error) {
+	massage := fmt.Sprintf(`顧客から次のような問い合わせがありました。
+「%s」
+これに返信するメール本文を作成してください。
+`, content)
 	resp, err := c.client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -24,7 +28,7 @@ func (c *ChatGPT) Create(content string) (string, error) {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: content,
+					Content: massage,
 				},
 			},
 		},

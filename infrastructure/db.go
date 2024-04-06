@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"log"
@@ -37,6 +38,27 @@ func Connect() *sql.DB {
 	return db
 }
 
-func (db *Db) FindAll() error {
+func (c *Db) UnitOfWork(ctx context.Context, fn func(ctx context.Context) error) error {
+	tx, err := c.conn.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+	if err != nil {
+		return err
+	}
+
+	var done bool
+	defer func() {
+		if !done {
+			_ = tx.Rollback()
+		}
+	}()
+
+	if err := fn(ctx); err != nil {
+		return err
+	}
+
+	done = true
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
 	return nil
 }

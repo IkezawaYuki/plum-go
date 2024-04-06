@@ -38,7 +38,7 @@ func (h *Handler) SupportContact(c *gin.Context) {
 }
 
 func (h *Handler) GmailToHubspot(c *gin.Context) {
-	var mail domain.Mail
+	var mail domain.Gmail
 	if err := c.BindJSON(&mail); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return

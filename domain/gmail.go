@@ -1,12 +1,12 @@
 package domain
 
-type Mail struct {
+type Gmail struct {
 	Title       string `json:"title"`
 	Content     string `json:"content"`
 	FromAddress string `json:"from_address"`
 }
 
-func (m *Mail) Validation() error {
+func (m *Gmail) Validation() error {
 	if m.Content == "" {
 		return EmailContentIsEmpty
 	}
