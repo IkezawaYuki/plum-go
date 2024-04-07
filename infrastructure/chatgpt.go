@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/sashabaranov/go-openai"
+	"plum/logger"
 )
 
 type ChatGPT struct {
@@ -36,6 +37,6 @@ func (c *ChatGPT) Create(content string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(resp.Choices[0].Message.Content)
+	logger.Logger.Info("message is generated", resp.Choices[0].Message.Content)
 	return resp.Choices[0].Message.Content, nil
 }

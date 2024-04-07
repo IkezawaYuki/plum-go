@@ -2,8 +2,8 @@ package infrastructure
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
+	"plum/logger"
 	"time"
 )
 
@@ -38,9 +38,9 @@ func (s *Slack) SendMessage(webhookURL, msg string) error {
 
 	// ステータスコードをチェック
 	if resp.StatusCode == http.StatusOK {
-		fmt.Println("Message sent successfully")
+		logger.Logger.Info("message sent successfully")
 	} else {
-		fmt.Println("Failed to send message")
+		logger.Logger.Info("failed to send message")
 	}
 	return nil
 }

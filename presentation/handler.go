@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"plum/domain"
+	"plum/logger"
 	"plum/usecase"
 )
 
@@ -30,7 +31,7 @@ func (h *Handler) SupportContact(c *gin.Context) {
 
 	go func() {
 		if err := h.contactService.RespondContact(contact); err != nil {
-			log.Printf("%v", err)
+			logger.Logger.Error("RespondContact is failed", err)
 		}
 	}()
 
@@ -52,5 +53,10 @@ func (h *Handler) GmailToHubspot(c *gin.Context) {
 			log.Printf("%v", err)
 		}
 	}()
+	c.JSON(http.StatusOK, "success")
+}
+
+func (h *Handler) GmailToAiSearch(c *gin.Context) {
+
 	c.JSON(http.StatusOK, "success")
 }

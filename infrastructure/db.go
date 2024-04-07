@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"log"
-	"plum/presentation"
+	"plum/logger"
 )
 
 type Db struct {
@@ -34,8 +34,12 @@ func Connect() *sql.DB {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	presentation.Logger.Info("DB connected")
+	logger.Logger.Info("DB connected")
 	return db
+}
+
+func (c *Db) Close() error {
+	return c.conn.Close()
 }
 
 func (c *Db) UnitOfWork(ctx context.Context, fn func(ctx context.Context) error) error {
