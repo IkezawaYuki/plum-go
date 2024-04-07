@@ -28,8 +28,7 @@ type HubspotService interface {
 }
 
 type GmailService interface {
-	CreateDraft(string) error
-	Crawling() error
+	CreateDraft(string, string) error
 }
 
 func NewContactService(
@@ -49,13 +48,13 @@ func NewContactService(
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
-
-	// ai search
-	//pastInteraction, err := aisearch.Get(contact.Contents)
-
-	return nil
+	panic("implement me!!")
 }
 
 func (c *ContactService) GmailToHubspot(mail domain.Gmail) error {
+	panic("implement me!!")
+}
+
+func (c *ContactService) GmailToAiSearch(mailList domain.GmailList) error {
 	panic("implement me!!")
 }

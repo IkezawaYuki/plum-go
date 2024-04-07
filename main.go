@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -40,7 +41,11 @@ func main() {
 	hubspot := infrastructure.NewHubspot(os.Getenv("HUBSPOT_ACCESS_TOKEN"))
 	slack := infrastructure.NewSlack()
 	chatgpt := infrastructure.NewChatGPT(os.Getenv("AOAI_TOKEN"))
-	gmailService := infrastructure.NewGmailService()
+	b, err := os.ReadFile("./credentials.json")
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	gmailService := infrastructure.NewGmailService(b)
 	aiSearchSearch := infrastructure.NewAISearch(os.Getenv("AI_SEARCH_URL"), os.Getenv("AI_SEARCH_API_KEY"))
 
 	contactService := usecase.NewContactService(
@@ -54,6 +59,7 @@ func main() {
 
 	r.POST("/support/contact", handler.SupportContact)
 	r.POST("/mail/hubspot", handler.GmailToHubspot)
+	r.POST("/mail/aisearch", handler.GmailToAiSearch)
 
 	server := &http.Server{
 		Addr:    "127.0.0.1:8080",

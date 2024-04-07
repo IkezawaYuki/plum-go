@@ -9,6 +9,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	fmt.Println("TestMain is invoked")
 	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")

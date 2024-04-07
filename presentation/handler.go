@@ -57,6 +57,18 @@ func (h *Handler) GmailToHubspot(c *gin.Context) {
 }
 
 func (h *Handler) GmailToAiSearch(c *gin.Context) {
-
+	var mailList domain.GmailList
+	if err := c.BindJSON(&mailList); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	if err := mailList.Validation(); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+	if err := h.contactService.GmailToAiSearch(mailList); err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 	c.JSON(http.StatusOK, "success")
 }
