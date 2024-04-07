@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"plum/infrastructure"
+	"plum/logger"
 	"plum/presentation"
 	"plum/usecase"
 	"syscall"
@@ -17,7 +18,7 @@ func main() {
 
 	r := gin.Default()
 
-	presentation.Logger.Info("start plum!!!")
+	logger.Logger.Info("start plum!!!")
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
@@ -60,17 +61,17 @@ func main() {
 	}
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
-			presentation.Logger.Error("listen: ", err)
+			logger.Logger.Error("listen: ", err)
 		}
 	}()
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	presentation.Logger.Info("Shutting down server...")
+	logger.Logger.Info("Shutting down server...")
 
 	if err := server.Shutdown(context.Background()); err != nil {
-		presentation.Logger.Error("Server forced to shutdown: ", err)
+		logger.Logger.Error("Server forced to shutdown: ", err)
 	}
-	presentation.Logger.Info("Server exiting")
+	logger.Logger.Info("Server exiting")
 }

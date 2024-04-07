@@ -1,4 +1,4 @@
-package presentation
+package logger
 
 import (
 	"log/slog"
