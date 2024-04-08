@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"golang.org/x/oauth2"
@@ -83,5 +84,20 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 func (g *GmailService) CreateDraft(contents string, toAddress string) error {
-	panic("implement me!!")
+	var message gmail.Message
+	subject := "件名"
+	messageStr := []byte(
+		"From: 'me'\r\n" +
+			"To: " + toAddress + "\r\n" +
+			"Subject: " + subject + "\r\n\r\n" +
+			contents)
+	message.Raw = base64.URLEncoding.EncodeToString(messageStr)
+	draft := &gmail.Draft{
+		Message: &message,
+	}
+	draft, err := g.service.Users.Drafts.Create("me", draft).Do()
+	if err != nil {
+		return fmt.Errorf("create mail is failed: %w", err)
+	}
+	return nil
 }
