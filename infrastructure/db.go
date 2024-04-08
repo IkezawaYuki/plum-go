@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"github.com/go-sql-driver/mysql"
 	"log"
+	"os"
 	"plum/logger"
 )
 
@@ -20,8 +21,8 @@ func NewDb(connection *sql.DB) *Db {
 
 func Connect() *sql.DB {
 	cfg := mysql.Config{
-		User:   "",
-		Passwd: "",
+		User:   os.Getenv("DATABASE_USER"),
+		Passwd: os.Getenv("DATABASE_PASSWORD"),
 		Net:    "tcp",
 		Addr:   "127.0.0.1:3306",
 		DBName: "",

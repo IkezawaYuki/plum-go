@@ -26,15 +26,11 @@ func (h *Handler) SupportContact(c *gin.Context) {
 	if err := contact.Validation(); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 	}
-
-	// TODO Hubspotから顧客情報を取得
-
 	go func() {
 		if err := h.contactService.RespondContact(contact); err != nil {
 			logger.Logger.Error("RespondContact is failed", err)
 		}
 	}()
-
 	c.JSON(http.StatusOK, "success")
 }
 

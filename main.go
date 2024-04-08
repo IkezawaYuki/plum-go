@@ -40,13 +40,17 @@ func main() {
 
 	hubspot := infrastructure.NewHubspot(os.Getenv("HUBSPOT_ACCESS_TOKEN"))
 	slack := infrastructure.NewSlack()
-	chatgpt := infrastructure.NewChatGPT(os.Getenv("AOAI_TOKEN"))
+	chatgpt := infrastructure.NewChatGPT(
+		os.Getenv("AZURE_OPENAI_KEY"),
+		os.Getenv("AZURE_OPENAI_ENDPOINT"))
 	b, err := os.ReadFile("./credentials.json")
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
 	gmailService := infrastructure.NewGmailService(b)
-	aiSearchSearch := infrastructure.NewAISearch(os.Getenv("AI_SEARCH_URL"), os.Getenv("AI_SEARCH_API_KEY"))
+	aiSearchSearch := infrastructure.NewAISearch(
+		os.Getenv("AI_SEARCH_URL"),
+		os.Getenv("AI_SEARCH_API_KEY"))
 
 	contactService := usecase.NewContactService(
 		hubspot,

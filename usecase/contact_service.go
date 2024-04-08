@@ -20,7 +20,7 @@ type SlackService interface {
 }
 
 type ChatGPTService interface {
-	Create(string) (string, error)
+	Create(string) (*domain.Generated, error)
 }
 
 type HubspotService interface {
@@ -48,7 +48,7 @@ func NewContactService(
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
-	panic("implement me!!")
+	panic("wao")
 }
 
 func (c *ContactService) GmailToHubspot(mail domain.Gmail) error {
@@ -56,5 +56,5 @@ func (c *ContactService) GmailToHubspot(mail domain.Gmail) error {
 }
 
 func (c *ContactService) GmailToAiSearch(mailList domain.GmailList) error {
-	panic("implement me!!")
+	return nil
 }

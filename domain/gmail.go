@@ -1,10 +1,11 @@
 package domain
 
 type Gmail struct {
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	FromAddress string `json:"from_address"`
-	ToAddress   string `json:"to_address"`
+	ID          string   `json:"id"`
+	Subject     string   `json:"title"`
+	Body        string   `json:"content"`
+	FromAddress string   `json:"from_address"`
+	ToAddress   []string `json:"to_address"`
 }
 
 type GmailList struct {
@@ -12,7 +13,7 @@ type GmailList struct {
 }
 
 func (m *Gmail) Validation() error {
-	if m.Content == "" {
+	if m.Body == "" {
 		return EmailContentIsEmpty
 	}
 	return nil

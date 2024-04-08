@@ -83,6 +83,5 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 func (g *GmailService) CreateDraft(contents string, toAddress string) error {
-
-	return nil
+	panic("implement me!!")
 }

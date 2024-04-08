@@ -29,7 +29,7 @@ func (h *Hubspot) CreateTicket(ticket domain.Ticket) error {
 	properties["hs_pipeline_stage"] = "1"
 	properties["subject"] = ticket.Subject
 	properties["content"] = ticket.Content
-	properties["hubspot_owner_id"] = ticket.OwnerID
+	//properties["hubspot_owner_id"] = ticket.OwnerID
 	var ticketReq = &hubspot.CrmTicketCreateRequest{
 		Properties: properties,
 	}
