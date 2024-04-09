@@ -1,5 +1,7 @@
 package domain
 
+import "strings"
+
 type Gmail struct {
 	ID          string   `json:"id"`
 	Subject     string   `json:"title"`
@@ -26,4 +28,12 @@ func (m *GmailList) Validation() error {
 		}
 	}
 	return nil
+}
+
+func (m *Gmail) GetEmailAddress() string {
+	return strings.Join(m.ToAddress, " ")
+}
+
+func (m *Gmail) GetContents() string {
+	return m.Body
 }

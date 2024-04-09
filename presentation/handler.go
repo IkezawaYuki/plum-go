@@ -2,7 +2,6 @@ package presentation
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"plum/domain"
 	"plum/logger"
@@ -17,24 +16,24 @@ func NewHandler(contactService usecase.ContactService) Handler {
 	return Handler{contactService: contactService}
 }
 
-func (h *Handler) SupportContact(c *gin.Context) {
-	var contact domain.Contact
-	if err := c.BindJSON(&contact); err != nil {
+func (h *Handler) SupportForm(c *gin.Context) {
+	var form domain.Form
+	if err := c.BindJSON(&form); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	if err := contact.Validation(); err != nil {
+	if err := form.Validation(); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 	}
 	go func() {
-		if err := h.contactService.RespondContact(contact); err != nil {
+		if err := h.contactService.RespondContact(&form); err != nil {
 			logger.Logger.Error("RespondContact is failed", err)
 		}
 	}()
 	c.JSON(http.StatusOK, "success")
 }
 
-func (h *Handler) GmailToHubspot(c *gin.Context) {
+func (h *Handler) SupportMail(c *gin.Context) {
 	var mail domain.Gmail
 	if err := c.BindJSON(&mail); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
@@ -45,8 +44,8 @@ func (h *Handler) GmailToHubspot(c *gin.Context) {
 		return
 	}
 	go func() {
-		if err := h.contactService.GmailToHubspot(mail); err != nil {
-			log.Printf("%v", err)
+		if err := h.contactService.RespondContact(&mail); err != nil {
+			logger.Logger.Error("RespondContact is failed", err)
 		}
 	}()
 	c.JSON(http.StatusOK, "success")
@@ -62,7 +61,7 @@ func (h *Handler) GmailToAiSearch(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	if err := h.contactService.GmailToAiSearch(mailList); err != nil {
+	if err := h.contactService.BatchGmailToAiSearch(mailList); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}

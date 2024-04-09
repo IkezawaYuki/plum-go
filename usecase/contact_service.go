@@ -1,11 +1,12 @@
 package usecase
 
 import (
+	"fmt"
 	"plum/domain"
 )
 
 type ContactService struct {
-	ticketService  HubspotService
+	hubspotService HubspotService
 	slackService   SlackService
 	chatGptService ChatGPTService
 	gmailService   GmailService
@@ -16,7 +17,8 @@ type AISearch interface {
 }
 
 type SlackService interface {
-	SendMessage(webhookUrl, msg string) error
+	Escalation(contact domain.Contact) error
+	Report(contact domain.Contact) error
 }
 
 type ChatGPTService interface {
@@ -39,7 +41,7 @@ func NewContactService(
 	aiSearch AISearch,
 ) *ContactService {
 	return &ContactService{
-		ticketService:  hubspotService,
+		hubspotService: hubspotService,
 		slackService:   slackService,
 		chatGptService: chatGptService,
 		gmailService:   gmailService,
@@ -48,13 +50,26 @@ func NewContactService(
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
-	panic("wao")
+	generated, err := c.chatGptService.Create(contact.GetContents())
+	if err != nil {
+		return fmt.Errorf("c.chatGptService.Create: %w", err)
+	}
+	if !generated.Escalation {
+		if err := c.gmailService.CreateDraft(generated.Message, contact.GetEmailAddress()); err != nil {
+			return fmt.Errorf("c.gmailService.CreateDraft: %w", err)
+		}
+		return nil
+	}
+	ticket := domain.ContactToTicket(contact)
+	if err := c.hubspotService.CreateTicket(ticket); err != nil {
+		return fmt.Errorf("c.ticketService.CreateTicket: %w", err)
+	}
+	if err := c.slackService.Escalation(contact); err != nil {
+		return fmt.Errorf("c.slackService.Escalation: %w", err)
+	}
+	return nil
 }
 
-func (c *ContactService) GmailToHubspot(mail domain.Gmail) error {
-	panic("implement me!!")
-}
-
-func (c *ContactService) GmailToAiSearch(mailList domain.GmailList) error {
+func (c *ContactService) BatchGmailToAiSearch(mailList domain.GmailList) error {
 	return nil
 }

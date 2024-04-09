@@ -39,7 +39,7 @@ func main() {
 	})
 
 	hubspot := infrastructure.NewHubspot(os.Getenv("HUBSPOT_ACCESS_TOKEN"))
-	slack := infrastructure.NewSlack()
+	slack := infrastructure.NewSlack(os.Getenv("SLACK_WEBHOOK_URL"))
 	chatgpt := infrastructure.NewChatGPT(
 		os.Getenv("AZURE_OPENAI_KEY"),
 		os.Getenv("AZURE_OPENAI_ENDPOINT"))
@@ -61,9 +61,8 @@ func main() {
 	)
 	handler := presentation.NewHandler(*contactService)
 
-	r.POST("/support/contact", handler.SupportContact)
-	r.POST("/mail/hubspot", handler.GmailToHubspot)
-	r.POST("/mail/aisearch", handler.GmailToAiSearch)
+	r.POST("/support/form", handler.SupportForm)
+	r.POST("/support/mail", handler.SupportMail)
 
 	server := &http.Server{
 		Addr:    "127.0.0.1:8080",
