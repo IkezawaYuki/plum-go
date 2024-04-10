@@ -11,6 +11,9 @@ func TestGmailService_CreateDraft(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	gmailSrv := NewGmailService(b)
+	gmailSrv := NewGmailService(b, "../token.json")
 	fmt.Println(gmailSrv)
+	if err := gmailSrv.CreateDraft("ご担当者様", "yuki.ikezawa@strategy-drive.jp"); err != nil {
+		t.Fatalf("%s", err.Error())
+	}
 }

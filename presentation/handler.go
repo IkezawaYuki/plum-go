@@ -24,6 +24,7 @@ func (h *Handler) SupportForm(c *gin.Context) {
 	}
 	if err := form.Validation(); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
 	}
 	go func() {
 		if err := h.contactService.RespondContact(&form); err != nil {
@@ -48,22 +49,5 @@ func (h *Handler) SupportMail(c *gin.Context) {
 			logger.Logger.Error("RespondContact is failed", err)
 		}
 	}()
-	c.JSON(http.StatusOK, "success")
-}
-
-func (h *Handler) GmailToAiSearch(c *gin.Context) {
-	var mailList domain.GmailList
-	if err := c.BindJSON(&mailList); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-	if err := mailList.Validation(); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-	if err := h.contactService.BatchGmailToAiSearch(mailList); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
 	c.JSON(http.StatusOK, "success")
 }

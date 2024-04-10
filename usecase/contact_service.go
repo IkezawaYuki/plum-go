@@ -69,7 +69,3 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 	}
 	return nil
 }
-
-func (c *ContactService) BatchGmailToAiSearch(mailList domain.GmailList) error {
-	return nil
-}

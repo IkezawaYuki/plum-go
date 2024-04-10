@@ -10,6 +10,7 @@ import (
 	"google.golang.org/api/gmail/v1"
 	"google.golang.org/api/option"
 	"log"
+	"mime"
 	"net/http"
 	"os"
 )
@@ -18,12 +19,12 @@ type GmailService struct {
 	service *gmail.Service
 }
 
-func NewGmailService(credential []byte) *GmailService {
+func NewGmailService(credential []byte, tokenFilePath string) *GmailService {
 	config, err := google.ConfigFromJSON(credential, gmail.GmailComposeScope)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
-	client := getClient(config)
+	client := getClient(config, tokenFilePath)
 	srv, err := gmail.NewService(context.Background(), option.WithHTTPClient(client))
 	if err != nil {
 		log.Fatalf("Unable to retrieve Gmail client: %v", err)
@@ -31,12 +32,11 @@ func NewGmailService(credential []byte) *GmailService {
 	return &GmailService{service: srv}
 }
 
-func getClient(config *oauth2.Config) *http.Client {
-	tokFile := "token.json"
-	tok, err := tokenFromFile(tokFile)
+func getClient(config *oauth2.Config, tokenFilePath string) *http.Client {
+	tok, err := tokenFromFile(tokenFilePath)
 	if err != nil {
 		tok = getTokenFromWeb(config)
-		saveToken(tokFile, tok)
+		saveToken(tokenFilePath, tok)
 	}
 	return config.Client(context.Background(), tok)
 }
@@ -85,11 +85,12 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 
 func (g *GmailService) CreateDraft(contents string, toAddress string) error {
 	var message gmail.Message
-	subject := "件名"
+	subject := "お問い合わせありがとうございます"
+	encodedSubject := mime.QEncoding.Encode("utf-8", subject)
 	messageStr := []byte(
 		"From: 'me'\r\n" +
-			"To: " + toAddress + "\r\n" +
-			"Subject: " + subject + "\r\n\r\n" +
+			"To: " + toAddress + " \r\n" +
+			"Subject: " + encodedSubject + " \r\n\r\n" +
 			contents)
 	message.Raw = base64.URLEncoding.EncodeToString(messageStr)
 	draft := &gmail.Draft{

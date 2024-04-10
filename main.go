@@ -47,7 +47,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-	gmailService := infrastructure.NewGmailService(b)
+	gmailService := infrastructure.NewGmailService(b, "./token.json")
 	aiSearchSearch := infrastructure.NewAISearch(
 		os.Getenv("AI_SEARCH_URL"),
 		os.Getenv("AI_SEARCH_API_KEY"))
