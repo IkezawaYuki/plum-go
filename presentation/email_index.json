@@ -3,10 +3,8 @@
   "fields": [
     {"name": "id", "type": "Edm.String", "key": true, "filterable": true},
     {"name": "from", "type": "Edm.String", "searchable": true},
-    {"name": "to", "type": "Collection(Edm.String)", "searchable": true},
+    {"name": "to", "type": "Edm.String", "searchable": true},
     {"name": "subject", "type": "Edm.String", "searchable": true},
     {"name": "body", "type": "Edm.String", "searchable": true, "analyzer": "standard.lucene"}
   ]
 }
-
-
