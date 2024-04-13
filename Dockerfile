@@ -6,7 +6,7 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -x -o main main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main main.go
 
 FROM alpine:3.19.1
 
@@ -19,5 +19,16 @@ COPY token.json .
 COPY credentials.json .
 
 EXPOSE 8080
+
+RUN chmod +x /app/main
+
+RUN chmod +r /app/.env
+RUN chmod +r /app/token.json
+RUN chmod +r /app/credentials.json
+
+RUN ls -la
+RUN ls -la /app
+RUN ls -la /app/main
+
 
 CMD [ "/app/main" ]
