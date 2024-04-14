@@ -61,8 +61,8 @@ func main() {
 	)
 	handler := presentation.NewHandler(*contactService)
 
-	r.POST("/support/form", handler.SupportForm)
-	r.POST("/support/mail", handler.SupportMail)
+	r.POST("/plum/support/form", handler.SupportForm)
+	r.POST("/plum/support/mail", handler.SupportMail)
 
 	server := &http.Server{
 		Addr:    "127.0.0.1:8001",
