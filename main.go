@@ -65,7 +65,7 @@ func main() {
 	r.POST("/support/mail", handler.SupportMail)
 
 	server := &http.Server{
-		Addr:    "127.0.0.1:8080",
+		Addr:    "127.0.0.1:8001",
 		Handler: r,
 	}
 	go func() {

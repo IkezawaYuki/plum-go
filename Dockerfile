@@ -18,7 +18,7 @@ COPY .env .
 COPY token.json .
 COPY credentials.json .
 
-EXPOSE 8080
+EXPOSE 8001
 
 RUN chmod +x /app/main
 
