@@ -65,7 +65,7 @@ func main() {
 	r.POST("/plum/support/mail", handler.SupportMail)
 
 	server := &http.Server{
-		Addr:    "127.0.0.1:8001",
+		Addr:    "0.0.0.0:8001",
 		Handler: r,
 	}
 	go func() {
