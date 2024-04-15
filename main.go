@@ -32,7 +32,7 @@ func main() {
 		AllowCredentials:           true,
 	}))
 
-	r.GET("/ping", func(c *gin.Context) {
+	r.GET("/plum/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "ping",
 		})
