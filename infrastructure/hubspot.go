@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/belong-inc/go-hubspot"
 	"plum/domain"
+	"plum/logger"
 )
 
 type Hubspot struct {
@@ -24,11 +25,13 @@ CreateTicket
 Hubspotにチケットを新たに作成する。
 */
 func (h *Hubspot) CreateTicket(ticket domain.Ticket) error {
+	logger.Logger.Info("CreateTicket is invoked")
 	properties := make(map[string]interface{})
 	properties["hs_pipeline"] = "0"
 	properties["hs_pipeline_stage"] = "1"
 	properties["subject"] = ticket.Subject
 	properties["content"] = ticket.Content
+	// TODO OwnerIDはどうやったらとれるのか
 	//properties["hubspot_owner_id"] = ticket.OwnerID
 	var ticketReq = &hubspot.CrmTicketCreateRequest{
 		Properties: properties,
@@ -42,7 +45,7 @@ func (h *Hubspot) CreateTicket(ticket domain.Ticket) error {
 }
 
 func (h *Hubspot) GetContact(contractId string) error {
-	fmt.Println("GetContact is invoked")
+	logger.Logger.Info("GetContact is invoked")
 	res, err := h.client.CRM.Contact.Get(contractId, &hubspot.Contact{}, nil)
 	if err != nil {
 		return err
@@ -51,7 +54,7 @@ func (h *Hubspot) GetContact(contractId string) error {
 	if !ok {
 		return errors.New("unable to assert type")
 	}
-	// Use contact fields.
+
 	fmt.Println(contact.FirstName)
 	fmt.Println(contact.Message)
 	fmt.Println(contact.Website)

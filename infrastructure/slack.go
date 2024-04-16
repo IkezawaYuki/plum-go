@@ -46,8 +46,7 @@ func (s *Slack) Escalation(contact domain.Contact) error {
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-
-	// ステータスコードをチェック
+	
 	if resp.StatusCode == http.StatusOK {
 		logger.Logger.Info("message sent successfully")
 	} else {
