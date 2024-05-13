@@ -3,16 +3,27 @@ package domain
 import "regexp"
 
 type Form struct {
-	CompanyName string `json:"company_name"`
-	PhoneNumber string `json:"phone_number"`
-	LastName    string `json:"last_name"`
-	FirstName   string `json:"first_name"`
-	Email       string `json:"email"`
-	Contents    string `json:"contents"`
+	Company   string `json:"company"`
+	Phone     string `json:"phone"`
+	LastName  string `json:"last_name"`
+	FirstName string `json:"first_name"`
+	Email     string `json:"email"`
+	Content   string `json:"contents"`
+}
+
+func NewForm(company, phone, lastName, firstName, email, content string) Form {
+	return Form{
+		Company:   company,
+		Phone:     phone,
+		LastName:  lastName,
+		FirstName: firstName,
+		Email:     email,
+		Content:   content,
+	}
 }
 
 func (c *Form) Validation() error {
-	if c.Contents == "" {
+	if c.Content == "" {
 		return ContentsIsEmptyError
 	}
 	if c.Email == "" {
@@ -35,5 +46,5 @@ func (c *Form) GetEmailAddress() string {
 }
 
 func (c *Form) GetContents() string {
-	return c.Contents
+	return c.Content
 }

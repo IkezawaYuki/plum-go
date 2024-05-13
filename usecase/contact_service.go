@@ -31,6 +31,7 @@ type HubspotService interface {
 
 type GmailService interface {
 	CreateDraft(string, string) error
+	FollowUpMail(string) error
 }
 
 func NewContactService(
@@ -54,18 +55,26 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 	if err != nil {
 		return fmt.Errorf("c.chatGptService.Create: %w", err)
 	}
+	if err := c.gmailService.FollowUpMail(contact.GetEmailAddress()); err != nil {
+		return fmt.Errorf("c.gmailService.FollowUpMail: %w", err)
+	}
 	if !generated.Escalation {
 		if err := c.gmailService.CreateDraft(generated.Message, contact.GetEmailAddress()); err != nil {
 			return fmt.Errorf("c.gmailService.CreateDraft: %w", err)
 		}
-		return nil
+		if err := c.slackService.Report(contact); err != nil {
+			return fmt.Errorf("c.slackService.Report: %w", err)
+		}
+	} else {
+		if err := c.slackService.Escalation(contact); err != nil {
+			return fmt.Errorf("c.slackService.Escalation: %w", err)
+		}
 	}
+
 	ticket := domain.ContactToTicket(contact)
 	if err := c.hubspotService.CreateTicket(ticket); err != nil {
 		return fmt.Errorf("c.ticketService.CreateTicket: %w", err)
 	}
-	if err := c.slackService.Escalation(contact); err != nil {
-		return fmt.Errorf("c.slackService.Escalation: %w", err)
-	}
+
 	return nil
 }

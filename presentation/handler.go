@@ -1,6 +1,7 @@
 package presentation
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"plum/domain"
@@ -17,11 +18,15 @@ func NewHandler(contactService usecase.ContactService) Handler {
 }
 
 func (h *Handler) SupportForm(c *gin.Context) {
-	var form domain.Form
-	if err := c.BindJSON(&form); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
+	form := domain.NewForm(
+		c.PostForm("company"),
+		c.PostForm("phone"),
+		c.PostForm("lastname"),
+		c.PostForm("firstname"),
+		c.PostForm("email"),
+		c.PostForm("content"),
+	)
+	fmt.Println(form)
 	if err := form.Validation(); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
@@ -31,7 +36,7 @@ func (h *Handler) SupportForm(c *gin.Context) {
 			logger.Logger.Error("RespondContact is failed", err)
 		}
 	}()
-	c.JSON(http.StatusOK, "success")
+	c.Redirect(http.StatusSeeOther, "/plum/support/thank_you")
 }
 
 func (h *Handler) SupportMail(c *gin.Context) {

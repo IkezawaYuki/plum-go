@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,6 +19,10 @@ import (
 )
 
 func main() {
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	r := gin.Default()
 
@@ -53,6 +59,8 @@ func main() {
 	chatgpt := infrastructure.NewChatGPT(
 		os.Getenv("AZURE_OPENAI_KEY"),
 		os.Getenv("AZURE_OPENAI_ENDPOINT"))
+	fmt.Println(os.Getenv("AZURE_OPENAI_KEY"))
+	fmt.Println(os.Getenv("AZURE_OPENAI_ENDPOINT"))
 	b, err := os.ReadFile("./credentials.json")
 	if err != nil {
 		log.Fatalf("%v", err)

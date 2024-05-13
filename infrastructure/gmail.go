@@ -83,6 +83,41 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 	return tok, err
 }
 
+var content = `===================================
+
+本メールは自動返信メールとなっております
+
+===================================
+
+
+
+この度はお問い合わせありがとうございます。
+
+
+お問い合わせ内容を確認してご連絡を差し上げます。
+
+
+引き続き宜しくお願い致します。`
+
+func (g *GmailService) FollowUpMail(toAddress string) error {
+	var message gmail.Message
+	subject := "お問い合わせありがとうございます"
+	encodedSubject := mime.QEncoding.Encode("utf-8", subject)
+	messageStr := []byte(
+		"From: 'me'\r\n" +
+			"To: " + toAddress + " \r\n" +
+			"Subject: " + encodedSubject + " \r\n\r\n" +
+			content)
+	message.Raw = base64.URLEncoding.EncodeToString(messageStr)
+
+	sendCall, err := g.service.Users.Messages.Send("me", &message).Do()
+	if err != nil {
+		return fmt.Errorf("send mail is failed: %w", err)
+	}
+	fmt.Println(sendCall.Id)
+	return nil
+}
+
 func (g *GmailService) CreateDraft(contents string, toAddress string) error {
 	var message gmail.Message
 	subject := "お問い合わせありがとうございます"
@@ -98,7 +133,7 @@ func (g *GmailService) CreateDraft(contents string, toAddress string) error {
 	}
 	draft, err := g.service.Users.Drafts.Create("me", draft).Do()
 	if err != nil {
-		return fmt.Errorf("create mail is failed: %w", err)
+		return fmt.Errorf("create draft mail is failed: %w", err)
 	}
 	return nil
 }
