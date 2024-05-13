@@ -51,3 +51,11 @@ func (h *Handler) SupportMail(c *gin.Context) {
 	}()
 	c.JSON(http.StatusOK, "success")
 }
+
+func (h *Handler) SupportFormPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "form.tmpl", gin.H{})
+}
+
+func (h *Handler) ThankYouPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "thank_you.tmpl", gin.H{})
+}

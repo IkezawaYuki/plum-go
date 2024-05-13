@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -31,6 +32,15 @@ func main() {
 		AllowHeaders:               []string{"Authentication", "Origin"},
 		AllowCredentials:           true,
 	}))
+
+	r.Static("/static", "./static")
+
+	loadTemplates := func(router *gin.Engine) {
+		templ := template.Must(template.New("").Funcs(template.FuncMap{}).ParseGlob("templates/*.tmpl"))
+		r.SetHTMLTemplate(templ)
+	}
+
+	loadTemplates(r)
 
 	r.GET("/plum/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -63,6 +73,8 @@ func main() {
 
 	r.POST("/plum/support/form", handler.SupportForm)
 	r.POST("/plum/support/mail", handler.SupportMail)
+	r.GET("/plum/support/form", handler.SupportFormPage)
+	r.GET("/plum/support/thank_you", handler.ThankYouPage)
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:8001",
