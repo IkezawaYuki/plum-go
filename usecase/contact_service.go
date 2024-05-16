@@ -59,6 +59,7 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 		return fmt.Errorf("c.gmailService.FollowUpMail: %w", err)
 	}
 	if !generated.Escalation {
+		fmt.Println(generated.Message)
 		if err := c.gmailService.CreateDraft(generated.Message, contact.GetEmailAddress()); err != nil {
 			return fmt.Errorf("c.gmailService.CreateDraft: %w", err)
 		}
