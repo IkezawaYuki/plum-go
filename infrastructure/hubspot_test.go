@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"errors"
 	"fmt"
 	"github.com/joho/godotenv"
 	"log"
@@ -46,17 +47,12 @@ func TestHubspot_SearchContact(t *testing.T) {
 		t.Fatalf("%s", err.Error())
 	}
 	fmt.Println(contactId)
-}
 
-func TestHubspot_Associate(t *testing.T) {
-	ticketId := 2728396090
-	fmt.Println(ticketId)
-	contactId := 9287447659
-	fmt.Println(contactId)
-	hubspot := NewHubspot(os.Getenv("HUBSPOT_ACCESS_TOKEN"))
-	err := hubspot.Associate(ticketId, contactId)
-	if err != nil {
+	_, err = hubspot.SearchContact("yddddduki.ikezawa@strategy-drive.jp")
+	if errors.Is(err, domain.HubspotNoResultsError) == false {
 		t.Fatalf("%s", err.Error())
+	} else {
+		fmt.Println(err)
 	}
 }
 
@@ -77,8 +73,33 @@ func TestHubspot_CreateAndAssociate(t *testing.T) {
 		t.Fatalf("%s", err.Error())
 	}
 	fmt.Println(contactId)
-	err = hubspot.Associate(ticketId, contactId)
+	err = hubspot.AssociateContactToTicket(ticketId, contactId)
 	if err != nil {
 		t.Fatalf("%s", err.Error())
+	}
+	companyId, err := hubspot.SearchCompanyByName("鼓動")
+	if err != nil {
+		t.Fatalf("%s", err.Error())
+	}
+	fmt.Println(companyId)
+	err = hubspot.AssociateCompanyToTicket(ticketId, companyId)
+	if err != nil {
+		t.Fatalf("%s", err.Error())
+	}
+}
+
+func TestHubspot_SearchCompanyByName(t *testing.T) {
+	hubspot := NewHubspot(os.Getenv("HUBSPOT_ACCESS_TOKEN"))
+	_id, err := hubspot.SearchCompanyByName("鼓動")
+	if err != nil {
+		t.Fatalf("%s", err.Error())
+	}
+	fmt.Println(_id)
+
+	_, err = hubspot.SearchCompanyByName("wahaha本舗")
+	if errors.Is(err, domain.HubspotNoResultsError) == false {
+		t.Fatalf("%s", err.Error())
+	} else {
+		fmt.Println(err)
 	}
 }

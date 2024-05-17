@@ -26,7 +26,12 @@ type ChatGPTService interface {
 }
 
 type HubspotService interface {
-	CreateTicket(ticket domain.Ticket) error
+	CreateTicket(ticket domain.Ticket) (int, error)
+	SearchCompanyByName(companyName string) (int, error)
+	SearchContact(email string) (int, error)
+	AssociateContactToTicket(ticketId, contactId int) error
+	AssociateCompanyToTicket(ticketId, companyId int) error
+	GetContact(contractId string) error
 }
 
 type GmailService interface {
@@ -72,10 +77,11 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 		}
 	}
 
-	ticket := domain.ContactToTicket(contact)
-	if err := c.hubspotService.CreateTicket(ticket); err != nil {
+	ticketObj := domain.ContactToTicket(contact)
+	ticketId, err := c.hubspotService.CreateTicket(ticketObj)
+	if err != nil {
 		return fmt.Errorf("c.ticketService.CreateTicket: %w", err)
 	}
-
+	fmt.Println(ticketId)
 	return nil
 }
