@@ -37,3 +37,7 @@ func (m *Gmail) GetEmailAddress() string {
 func (m *Gmail) GetContents() string {
 	return m.Body
 }
+
+func (m *Gmail) GetCompany() string {
+	return ""
+}

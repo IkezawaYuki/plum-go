@@ -48,3 +48,7 @@ func (c *Form) GetEmailAddress() string {
 func (c *Form) GetContents() string {
 	return c.Content
 }
+
+func (c *Form) GetCompany() string {
+	return c.Company
+}

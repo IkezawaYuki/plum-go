@@ -162,7 +162,7 @@ func (h *Hubspot) SearchCompanyByName(companyName string) (int, error) {
 			fmt.Println("Error decoding JSON:", err)
 		}
 		if hubspotCompany.Total == 0 {
-			return companyId, domain.HubspotNoResultsError
+			return companyId, nil
 		}
 		result, err := strconv.Atoi(hubspotCompany.Results[0].ID)
 		if err != nil {
@@ -248,7 +248,7 @@ func (h *Hubspot) SearchContact(email string) (int, error) {
 		}
 		fmt.Println(hubspotContact)
 		if hubspotContact.Total == 0 {
-			return contactId, domain.HubspotNoResultsError
+			return contactId, nil
 		}
 		result, err := strconv.Atoi(hubspotContact.Results[0].ID)
 		if err != nil {

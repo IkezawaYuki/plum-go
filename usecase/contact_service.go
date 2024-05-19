@@ -76,12 +76,28 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 			return fmt.Errorf("c.slackService.Escalation: %w", err)
 		}
 	}
-
 	ticketObj := domain.ContactToTicket(contact)
 	ticketId, err := c.hubspotService.CreateTicket(ticketObj)
 	if err != nil {
 		return fmt.Errorf("c.ticketService.CreateTicket: %w", err)
 	}
-	fmt.Println(ticketId)
+	contactId, err := c.hubspotService.SearchContact(contact.GetEmailAddress())
+	if err != nil {
+		return fmt.Errorf("c.hubspotService.SearchContact: %w", err)
+	}
+	if contactId != 0 {
+		if err := c.hubspotService.AssociateContactToTicket(ticketId, contactId); err != nil {
+			return fmt.Errorf("c.hubspotService.AssociateContactToTicket: %w", err)
+		}
+	}
+	companyId, err := c.hubspotService.SearchCompanyByName(contact.GetCompany())
+	if err != nil {
+		return fmt.Errorf("c.hubspotService.SearchCompanyByName: %w", err)
+	}
+	if companyId != 0 {
+		if err := c.hubspotService.AssociateCompanyToTicket(companyId, contactId); err != nil {
+			return fmt.Errorf("c.hubspotService.AssociateCompanyToTicket: %w", err)
+		}
+	}
 	return nil
 }
