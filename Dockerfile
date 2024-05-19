@@ -17,6 +17,8 @@ COPY --from=builder /app/main .
 COPY .env .
 COPY token.json .
 COPY credentials.json .
+COPY templates/ templates/
+COPY static/ static/
 
 EXPOSE 8001
 
