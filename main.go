@@ -39,7 +39,7 @@ func main() {
 		AllowCredentials:           true,
 	}))
 
-	r.Static("/static", "./static")
+	r.Static("/plum/static", "./static")
 
 	loadTemplates := func(router *gin.Engine) {
 		templ := template.Must(template.New("").Funcs(template.FuncMap{}).ParseGlob("templates/*.tmpl"))
