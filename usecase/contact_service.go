@@ -11,6 +11,7 @@ type ContactService struct {
 	chatGptService ChatGPTService
 	gmailService   GmailService
 	aiSearch       AISearch
+	db             Db
 }
 
 type AISearch interface {
@@ -40,12 +41,18 @@ type GmailService interface {
 	FollowUpMail(string) error
 }
 
+type Db interface {
+	GetChatgptSetting() (domain.ChatgptSetting, error)
+	UpdateChatgptSetting(domain.ChatgptSetting) error
+}
+
 func NewContactService(
 	hubspotService HubspotService,
 	slackService SlackService,
 	chatGptService ChatGPTService,
 	gmailService GmailService,
 	aiSearch AISearch,
+	db Db,
 ) *ContactService {
 	return &ContactService{
 		hubspotService: hubspotService,
@@ -53,6 +60,7 @@ func NewContactService(
 		chatGptService: chatGptService,
 		gmailService:   gmailService,
 		aiSearch:       aiSearch,
+		db:             db,
 	}
 }
 
@@ -101,4 +109,12 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 		}
 	}
 	return nil
+}
+
+func (c *ContactService) GetChatgptSetting() (domain.ChatgptSetting, error) {
+	return c.db.GetChatgptSetting()
+}
+
+func (c *ContactService) UpdateChatgptSetting(setting domain.ChatgptSetting) error {
+	return c.db.UpdateChatgptSetting(setting)
 }

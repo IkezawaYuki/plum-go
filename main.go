@@ -69,6 +69,8 @@ func main() {
 	aiSearchSearch := infrastructure.NewAISearch(
 		os.Getenv("AI_SEARCH_URL"),
 		os.Getenv("AI_SEARCH_API_KEY"))
+	conn := infrastructure.DbConnect()
+	db := infrastructure.NewDb(conn)
 
 	contactService := usecase.NewContactService(
 		hubspot,
@@ -76,6 +78,7 @@ func main() {
 		chatgpt,
 		gmailService,
 		aiSearchSearch,
+		db,
 	)
 	handler := presentation.NewHandler(*contactService)
 
@@ -84,6 +87,7 @@ func main() {
 	r.GET("/plum/support/form", handler.SupportFormPage)
 	r.GET("/plum/support/thank_you", handler.ThankYouPage)
 	r.GET("/plum/dashboard", handler.DashboardPage)
+	r.POST("/plum/dashboard", handler.UpdateSetting)
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:8001",

@@ -66,5 +66,28 @@ func (h *Handler) ThankYouPage(c *gin.Context) {
 }
 
 func (h *Handler) DashboardPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{})
+	setting, err := h.contactService.GetChatgptSetting()
+	if err != nil {
+		c.HTML(http.StatusInternalServerError, "errors.tmpl", gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
+		"prompt":         setting.Prompt,
+		"system_message": setting.SystemMessage,
+	})
+}
+
+func (h *Handler) UpdateSetting(c *gin.Context) {
+	setting := domain.ChatgptSetting{}
+	setting.Prompt = c.PostForm("prompt")
+	setting.SystemMessage = c.PostForm("system_message")
+	if err := h.contactService.UpdateChatgptSetting(setting); err != nil {
+		c.HTML(http.StatusInternalServerError, "errors.tmpl", gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	c.Redirect(http.StatusFound, "/plum/dashboard")
 }

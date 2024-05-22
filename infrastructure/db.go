@@ -21,7 +21,7 @@ func NewDb(connection *sql.DB) *Db {
 	}
 }
 
-func Connect() *sql.DB {
+func DbConnect() *sql.DB {
 	cfg := mysql.Config{
 		User:   os.Getenv("DATABASE_USER"),
 		Passwd: os.Getenv("DATABASE_PASSWORD"),
@@ -45,7 +45,7 @@ func (c *Db) Close() error {
 	return c.conn.Close()
 }
 
-const selectChatgptSettingStmt = "select prompt, system_message chatgpt_setting where id = 1"
+const selectChatgptSettingStmt = "select prompt, system_message from chatgpt_setting where id = 1"
 
 func (c *Db) GetChatgptSetting() (domain.ChatgptSetting, error) {
 	result := domain.ChatgptSetting{}
@@ -59,19 +59,13 @@ func (c *Db) GetChatgptSetting() (domain.ChatgptSetting, error) {
 	return result, nil
 }
 
-const updatePromptStmt = "update chatgpt_setting set prompt = ? where id = 1"
+const updatePromptStmt = "update chatgpt_setting set prompt = ?, system_message = ? where id = 1"
 
-func (c *Db) UpdatePrompt(prompt string) error {
-	result, err := c.conn.Exec(updatePromptStmt, prompt)
+func (c *Db) UpdateChatgptSetting(setting domain.ChatgptSetting) error {
+	result, err := c.conn.Exec(updatePromptStmt, setting.Prompt, setting.SystemMessage)
 	if err != nil {
 		return err
 	}
 	fmt.Println(result.LastInsertId())
-	return nil
-}
-
-const updateSystemMsgStmt = "update chatgpt_setting set system_message = ? where id = 1"
-
-func (c *Db) UpdateSystemMessage(systemMsg string) error {
 	return nil
 }
