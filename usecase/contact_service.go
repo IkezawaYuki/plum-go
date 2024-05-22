@@ -23,6 +23,7 @@ type SlackService interface {
 
 type ChatGPTService interface {
 	Create(string) (*domain.Generated, error)
+	Generate(string) (*domain.Generated, error)
 }
 
 type HubspotService interface {

@@ -64,3 +64,7 @@ func (h *Handler) SupportFormPage(c *gin.Context) {
 func (h *Handler) ThankYouPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "thank_you.tmpl", gin.H{})
 }
+
+func (h *Handler) DashboardPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{})
+}

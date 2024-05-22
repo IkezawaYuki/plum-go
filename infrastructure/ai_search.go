@@ -14,10 +14,6 @@ func NewAISearch(baseURL, apiKey string) *AISearch {
 	}
 }
 
-func (a *AISearch) CreateIndex() error {
-	return nil
-}
-
 func (a *AISearch) UploadDocuments(doc domain.MailDoc) error {
 	return nil
 }

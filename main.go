@@ -83,6 +83,7 @@ func main() {
 	r.POST("/plum/support/mail", handler.SupportMail)
 	r.GET("/plum/support/form", handler.SupportFormPage)
 	r.GET("/plum/support/thank_you", handler.ThankYouPage)
+	r.GET("/plum/dashboard", handler.DashboardPage)
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:8001",

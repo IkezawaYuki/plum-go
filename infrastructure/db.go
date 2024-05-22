@@ -1,11 +1,13 @@
 package infrastructure
 
 import (
-	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"log"
 	"os"
+	"plum/domain"
 	"plum/logger"
 )
 
@@ -43,27 +45,33 @@ func (c *Db) Close() error {
 	return c.conn.Close()
 }
 
-func (c *Db) UnitOfWork(ctx context.Context, fn func(ctx context.Context) error) error {
-	tx, err := c.conn.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
+const selectChatgptSettingStmt = "select prompt, system_message chatgpt_setting where id = 1"
+
+func (c *Db) GetChatgptSetting() (domain.ChatgptSetting, error) {
+	result := domain.ChatgptSetting{}
+	row := c.conn.QueryRow(selectChatgptSettingStmt)
+	if err := row.Scan(&result.Prompt, &result.SystemMessage); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return result, nil
+		}
+		return result, err
+	}
+	return result, nil
+}
+
+const updatePromptStmt = "update chatgpt_setting set prompt = ? where id = 1"
+
+func (c *Db) UpdatePrompt(prompt string) error {
+	result, err := c.conn.Exec(updatePromptStmt, prompt)
 	if err != nil {
 		return err
 	}
+	fmt.Println(result.LastInsertId())
+	return nil
+}
 
-	var done bool
-	defer func() {
-		if !done {
-			_ = tx.Rollback()
-		}
-	}()
+const updateSystemMsgStmt = "update chatgpt_setting set system_message = ? where id = 1"
 
-	if err := fn(ctx); err != nil {
-		return err
-	}
-
-	done = true
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-
+func (c *Db) UpdateSystemMessage(systemMsg string) error {
 	return nil
 }
