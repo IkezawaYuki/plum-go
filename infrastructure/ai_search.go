@@ -49,6 +49,20 @@ func (a *AISearch) UploadDocuments(doc domain.MailDoc) error {
 	return nil
 }
 
+type Email struct {
+	SearchScore float64 `json:"@search.score"`
+	ID          string  `json:"id"`
+	From        string  `json:"from"`
+	To          string  `json:"to"`
+	Subject     string  `json:"subject"`
+	Body        string  `json:"body"`
+}
+
+type Response struct {
+	OdataContext string  `json:"@odata.context"`
+	Value        []Email `json:"value"`
+}
+
 func (a *AISearch) SearchDocuments(search string) (string, error) {
 	url := fmt.Sprintf("%s/indexes/%s/docs?api-version=2023-11-01&search=%s", a.baseURL, "email-index", search)
 	req, err := http.NewRequest("GET", url, nil)
@@ -77,6 +91,22 @@ func (a *AISearch) SearchDocuments(search string) (string, error) {
 		return "", fmt.Errorf("error: status code %d, %s", resp.StatusCode, body)
 	}
 
-	fmt.Println(string(body))
+	var response Response
+	if err := json.Unmarshal(body, &response); err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return "", err
+	}
+
+	// 最初のメールの情報を出力
+	if len(response.Value) > 0 {
+		email := response.Value[0]
+		fmt.Println("From:", email.From)
+		fmt.Println("To:", email.To)
+		fmt.Println("Subject:", email.Subject)
+		fmt.Println("Body:", email.Body)
+		return email.Body, nil
+	} else {
+		fmt.Println("No emails found")
+	}
 	return string(body), nil
 }

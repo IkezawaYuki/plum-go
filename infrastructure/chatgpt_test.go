@@ -3,25 +3,20 @@ package infrastructure
 import (
 	"fmt"
 	"os"
+	"plum/domain"
 	"testing"
 )
-
-func TestChatGPT_Create(t *testing.T) {
-	chatgpt := NewChatGPT(
-		os.Getenv("AZURE_OPENAI_KEY"),
-		os.Getenv("AZURE_OPENAI_ENDPOINT"))
-	generated, err := chatgpt.Create("お世話になっております。\n山田でございます。\n\n御社ではLPの制作はされていらっしゃいましたか？")
-	if err != nil {
-		t.Fatalf("%s", err.Error())
-	}
-	fmt.Println(generated)
-}
 
 func TestChatGPT_Generate(t *testing.T) {
 	chatgpt := NewChatGPT(
 		os.Getenv("AZURE_OPENAI_KEY"),
 		os.Getenv("AZURE_OPENAI_ENDPOINT"))
-	generated, err := chatgpt.Generate("お世話になっております。\n山田でございます。\n\n御社ではLPの制作はされていらっしゃいましたか？")
+	setting := domain.ChatgptSetting{
+		Prompt:        "次の問に答えなさい。",
+		SystemMessage: "あなたは計算が得意なAIです。前例があったとしてもその情報には惑わされません。",
+	}
+	related := "1 + 1 = 田んぼの田"
+	generated, err := chatgpt.Generate("1 + 1 =", related, setting)
 	if err != nil {
 		t.Fatalf("%s", err.Error())
 	}

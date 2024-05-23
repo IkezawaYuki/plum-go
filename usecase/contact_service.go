@@ -15,6 +15,7 @@ type ContactService struct {
 }
 
 type AISearch interface {
+	SearchDocuments(search string) (string, error)
 }
 
 type SlackService interface {
@@ -23,8 +24,7 @@ type SlackService interface {
 }
 
 type ChatGPTService interface {
-	Create(string) (*domain.Generated, error)
-	Generate(string) (*domain.Generated, error)
+	Generate(contents string, related string, setting domain.ChatgptSetting) (*domain.Generated, error)
 }
 
 type HubspotService interface {
@@ -65,7 +65,15 @@ func NewContactService(
 }
 
 func (c *ContactService) RespondContact(contact domain.Contact) error {
-	generated, err := c.chatGptService.Create(contact.GetContents())
+	related, err := c.aiSearch.SearchDocuments(contact.GetContents())
+	if err != nil {
+		return fmt.Errorf("c.aiSearch.SearchDocuments: %w", err)
+	}
+	setting, err := c.db.GetChatgptSetting()
+	if err != nil {
+		return fmt.Errorf("c.db.GetChatgptSetting: %w", err)
+	}
+	generated, err := c.chatGptService.Generate(contact.GetContents(), related, setting)
 	if err != nil {
 		return fmt.Errorf("c.chatGptService.Create: %w", err)
 	}
@@ -76,9 +84,6 @@ func (c *ContactService) RespondContact(contact domain.Contact) error {
 		fmt.Println(generated.Message)
 		if err := c.gmailService.CreateDraft(generated.Message, contact.GetEmailAddress()); err != nil {
 			return fmt.Errorf("c.gmailService.CreateDraft: %w", err)
-		}
-		if err := c.slackService.Report(contact); err != nil {
-			return fmt.Errorf("c.slackService.Report: %w", err)
 		}
 	} else {
 		if err := c.slackService.Escalation(contact); err != nil {
