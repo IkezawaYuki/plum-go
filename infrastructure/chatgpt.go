@@ -19,12 +19,16 @@ func NewChatGPT(apiKey, baseURL string) *ChatGPT {
 }
 
 func (c *ChatGPT) Generate(content string, related string, setting domain.ChatgptSetting) (*domain.Generated, error) {
-	massage := fmt.Sprintf(`%s 質問事項「%s」参考情報「%s」`, setting.Prompt, content, related)
+	massage := fmt.Sprintf(`%s 質問事項「%s」`, setting.Prompt, content)
 	systemMessage := setting.SystemMessage
 	dialog := []openai.ChatCompletionMessage{
 		{
 			Role:    openai.ChatMessageRoleSystem,
 			Content: systemMessage,
+		},
+		{
+			Role:    openai.ChatMessageRoleAssistant,
+			Content: related,
 		},
 		{
 			Role:    openai.ChatMessageRoleUser,

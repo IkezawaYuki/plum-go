@@ -68,7 +68,7 @@ func main() {
 	gmailService := infrastructure.NewGmailService(b, "./token.json")
 	aiSearchSearch := infrastructure.NewAISearch(
 		os.Getenv("AI_SEARCH_URL"),
-		os.Getenv("AI_SEARCH_API_KEY"))
+		os.Getenv("AI_SEARCH_API_KEY2"))
 	conn := infrastructure.DbConnect()
 	db := infrastructure.NewDb(conn)
 
