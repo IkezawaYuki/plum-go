@@ -26,8 +26,8 @@ func DbConnect() *sql.DB {
 		User:   os.Getenv("DATABASE_USER"),
 		Passwd: os.Getenv("DATABASE_PASSWORD"),
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: "plum",
+		Addr:   fmt.Sprintf("%s:3306", os.Getenv("DATABASE_HOST")),
+		DBName: os.Getenv("DATABASE_SCHEME"),
 	}
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
