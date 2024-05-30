@@ -8,22 +8,3 @@
     {"name": "body", "type": "Edm.String", "searchable": true, "analyzer": "standard.lucene"}
   ]
 }
-
-
-{
-  "name": "company-rule",
-  "fields": [
-    {"name": "id", "type": "Edm.String", "key": true, "filterable": true},
-    {"name": "title", "type": "Edm.String", "searchable": true},
-    {"name": "text", "type": "Edm.String", "searchable": true}
-  ]
-}
-
-
-{
-  "1条", "遅刻をしない"
-  "2条", "元気よく",
-  "3条", "早く帰る",
-  "4条", "早く帰る",
-}
-
