@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	url2 "net/url"
 	"plum/domain"
 )
 
@@ -64,7 +65,8 @@ type Response struct {
 }
 
 func (a *AISearch) SearchDocuments(search string) (string, error) {
-	url := fmt.Sprintf("%s/indexes/%s/docs?api-version=2023-11-01&search=%s", a.baseURL, "email-index", search)
+	query := url2.QueryEscape(search)
+	url := fmt.Sprintf("%s/indexes/%s/docs?api-version=2023-11-01&search=%s", a.baseURL, "email-index", query)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", fmt.Errorf("error creating request: %v", err)
